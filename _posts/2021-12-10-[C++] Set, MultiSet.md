@@ -24,8 +24,8 @@ search: true
 - **연관 컨테이너는 균형 이진트리를 사용하므로, 원소를 빠르게 찾을 수 있습니다.(LogN)**
 - key를 정렬 기준에 맞춰 균형 이진 트리에 저장하며, **Key는 삽입, 검색, 삭제 등에 모두 이용하고 변경할 수 없습니다.**
 - 양방향 반복자를 지원합니다.
-- 연관 컨테이너이기 때문에, 시퀀스 컨테이너에서 지원하는 다음의 함수들을 지원하지 않습니다.
-  - push_back(), push_front(), pop_back(), pop_front(), front(), back()
+- **연관 컨테이너이기 때문에, 시퀀스 컨테이너에서 지원하는 다음의 함수들을 지원하지 않습니다.**
+  - `push_back()`, `push_front()`, `pop_back()`, `pop_front()`, `front()`, `back()`
 
 ## set
 
@@ -37,8 +37,6 @@ search: true
 - **반복자의 탐색 순서**는 `inorder(중위순회)` 이진 트리 탐색을 사용합니다.
 
 ### set의 자주 사용되는 함수
-
-#### 요소 삽입 및 삭제
 
 |함수|설명|반환형|
 |---|---|---|
@@ -155,10 +153,9 @@ int main() {
 using namespace std;
 
 int main() {
-     multiset<int> ms;
+    multiset<int> ms;
 
     ms.insert( 50 );ms.insert( 10 );ms.insert( 80 );ms.insert( 80 );ms.insert( 80 );ms.insert( 30 );ms.insert( 50 );ms.insert( 70 );ms.insert( 60 ;
-
 
     multiset<int>::iterator iter;
     for( iter = ms.begin(); iter != ms.end() ; iter++)
