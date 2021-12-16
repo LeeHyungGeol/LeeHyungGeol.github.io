@@ -2,7 +2,7 @@
 layout: single
 title: "[Network] Internet Network(IP, TCP, UDP, PORT, DNS)"
 categories: Network
-tag: [Network, Internet, IP, TCP, UDP, PORT, DNS]
+tag: [Network, Internet, Packet, IP, TCP, UDP, PORT, DNS]
 toc: true
 author_profile: false
 search: true
