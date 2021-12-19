@@ -84,6 +84,9 @@ search: true
 
 ## Web Browser의 요청(Request) 흐름
 
+![Network  request, response](https://user-images.githubusercontent.com/56071088/146681532-5b7f48cd-3fb1-40fd-a8d4-cd09866bc313.png)
+
+
 **Client Web Browser에서의 요청(Request) 흐름**
 1. URL -> http Request Message 만들기
    1. DNS를 조회.
