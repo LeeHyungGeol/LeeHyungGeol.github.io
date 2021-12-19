@@ -107,3 +107,8 @@ Server가 Client의 상태(state)를 기억하지 않는다.
 
 
 
+### 참고 문헌 및 사이트
+
+- https://gmlwjd9405.github.io/2019/04/17/what-is-http-protocol.html
+- https://developer.mozilla.org/ko/docs/Web/HTTP/Messages
+
