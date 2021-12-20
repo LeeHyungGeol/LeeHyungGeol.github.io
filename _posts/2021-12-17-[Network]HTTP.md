@@ -46,11 +46,18 @@ search: true
 Chrome 개발자 도구(F12) -> Network -> Name의 마우스 우클릭 -> Protocol : HTTP 버전 확인가능
 
 ### HTTP 특징
-  
+
+```
 - Client-Server 구조(Request, Response 구조)
 - 무상태성(stateless), 비연결성(connectionless)
 - HTTP Message
 - 단순함, 확장가능
+```
+
+**단순함, 확장 가능**
+- HTTP는 단순하다. 스펙도 읽어 볼 만 하다.
+- HTTP 메시지도 매우 단순하다.
+- 크게 성공하는 표준 기술은 단순하지만 확장 가능한 기술
 
 #### Client-Server 구조(Request, Response 구조)
 
@@ -65,7 +72,7 @@ Client-Server 구조의 장점
 
 #### 무상태성(stateless)
 
-`무상태성(stateless)` : **연결(Connection)을 끊는 순간 Client와 Server의 통신이 끝나며 상태(State) 정보는 유지하지 않는 특성**
+> `무상태성(stateless)` : **연결(Connection)을 끊는 순간 Client와 Server의 통신이 끝나며 상태(State) 정보는 유지하지 않는 특성**
 
 Server가 Client의 상태(state)를 기억하지 않는다.
 - 장점:
@@ -86,7 +93,7 @@ Server가 Client의 상태(state)를 기억하지 않는다.
 
 #### 비연결성(connectionless) 
 
-`비연결성(connectionless)`  : HTTP는 클라이언트가 요청(Request)을 서버에 보내고, 서버는 클라이언트에게 적절한 응답(Response)을 주고, **연결(Connection)을 끊는 특성**이 있습니다.
+> `비연결성(connectionless)`  : HTTP는 클라이언트가 요청(Request)을 서버에 보내고, 서버는 클라이언트에게 적절한 응답(Response)을 주고, **연결(Connection)을 끊는 특성**이 있습니다.
 - 일반적으로 초 단위 이하의 빠른 속도로 응답한다.
 - 서버 자원을 매우 효율적으로 사용할 수 있다.
 
@@ -105,6 +112,96 @@ Server가 Client의 상태(state)를 기억하지 않는다.
 
 #### HTTP 메시지
 
+![Network  request, response](https://user-images.githubusercontent.com/56071088/146681532-5b7f48cd-3fb1-40fd-a8d4-cd09866bc313.png)
+
+![Network  http message](https://user-images.githubusercontent.com/56071088/146681531-0530dc54-b894-4e63-81ea-16ddde25f1f6.png)
+
+**HTTP 메시지 구조**
+
+```
+- start-line
+- header
+- empty line(CRLF)
+- message body
+```
+
+#### request message
+
+##### start-line = **request-line** 
+
+> **request-line = method (SPACE) request-target (SPACE) HTTP-version (CRLF)**
+
+**request-line** 
+1. method
+2. request-target 
+3. HTTP-version
+
+EX) `GET /search?q=world HTTP/1.1`
+-  HTTP 메서드(GET: 조회)
+- 요청 대상(/search?q=world)
+- HTTP 버젼(HTTP/1.1)
+
+**HTTP 메서드(중요!!💡)** ([HTTP 메서드](/_posts/2021-12-20-[Network]HTTP%20method%20&%20status%20code.md))
+- 종류 : GET, POST, PUT, PATCH, DELETE...
+- 서버가 수행해야 할 동작 지정
+
+**요청 대상(request target)**
+- absolute-path[?query] (절대경로[?쿼리])
+- 절대경로 = "/" 로 시작하는 경로
+- cf) *, http://... 와 같이 다른 유형의 경로지정 방법도 있다.
+
+##### Header
+
+> **header-field = field-name ":" OWS field-value OWS (OWS: 띄어쓰기 허용)**
+
+**HTTP 전송에 필요한 모든 부가정보**
+- EX) message-body의 내용, message-body의 크기, 압축, 인증, request client(browser) 정보, server application 정보, 캐시 관리 정보...
+- 표준 헤더가 너무 많음 ([HTTP Header](/_posts/2021-12-20-[Network]HTTP%20Header.md))
+- 필요시 임의의 헤더 추가 가능
+  - EX) `testHeader: test`
+- field-name은 대소문자 구문 없음
+
+EX) `Host: www.google.com`
+
+##### HTTP 메시지 바디
+
+- HTTP request message에는 message-body가 있을 수도 있고 없을 수도 있다.
+- 실제 전송할 데이터
+- HTML 문서, 이미지 영상, JSON등등 byte 로 표현할 수 있는 모든 데이터 전송 가능
+
+#### response message
+
+##### start-line = **status-line**
+
+> **status-line = HTTP-version (SPACE) status-code (SPACE) reason-pharse (CRLF)**
+
+**status-line**
+1. HTTP-version
+2. **status-code(중요!!💡)** ([status-code](/_posts/2021-12-20-[Network]HTTP%20method%20&%20status%20code.md)) : 요청 성공, 실패를 나타냄
+3. reason-pharse(이유 문구) : 사람이 이해할 수 있는 짧은 상태 코드 설명 글 
+
+EX) `HTTP/1.1 200 OK`
+- HTTP-version(HTTP/1.1)
+- status-code(200)
+- reason-pharse(OK)
+
+##### Header
+
+> **header-field = field-name ":" OWS field-value OWS (OWS: 띄어쓰기 허용)**
+
+**HTTP 전송에 필요한 모든 부가정보**
+- EX) message-body의 내용, message-body의 크기, 압축, 인증, request client(browser) 정보, server application 정보, 캐시 관리 정보...
+- 표준 헤더가 너무 많음 ([HTTP Header](/_posts/2021-12-20-[Network]HTTP%20Header.md))
+- 필요시 임의의 헤더 추가 가능
+  - EX) `testHeader: test`
+- field-name은 대소문자 구문 없음
+
+EX) `Content-Type: text/html;charset=UTF-8 Content-Length:3423`
+
+##### HTTP 메시지 바디
+
+- 실제 전송할 데이터
+- HTML 문서, 이미지 영상, JSON등등 byte 로 표현할 수 있는 모든 데이터 전송 가능
 
 
 ### 참고 문헌 및 사이트
