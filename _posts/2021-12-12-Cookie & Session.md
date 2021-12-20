@@ -11,10 +11,10 @@ search: true
 ## HTTP 프로토콜의 특징
 
 `비연결성(connectionless)`  : HTTP는 클라이언트가 요청(Request)을 서버에 보내고, 서버는 클라이언트에게 적절한 응답(Response)을 주고, **연결(Connection)을 끊는 특성**이 있습니다.
-- Header에 `keep-alive` 라는 값을 줘서 Connection을 재활용하는데 `HTTP 1.1` 에서는 이것이 `default`입니다. `(persistence connection)`
+- Header에 `keep-alive` 라는 값을 줘서 Connection을 재활용하는데 `HTTP 1.1` 에서는 이것이 `default`입니다. `(persistent connection)`
 - HTTP가 TCP 위에서 구현되었기 때문에 (HTTP 2 까지, HTTP 3는 Quic(UDP 기반)) 네트워크 관점에서 `keep-alive`는 옵션으로 `connectionless`의 연결비용을 줄이는 것을 장점으로 **비연결성**이라 합니다. 
 
-`비상태성(stateless)` : **연결(Connection)을 끊는 순간 Client와 Server의 통신이 끝나며 상태(State) 정본느 유지하지 않는 특성**
+`비상태성(stateless)` : **연결(Connection)을 끊는 순간 Client와 Server의 통신이 끝나며 상태(State) 정보는 유지하지 않는 특성**
 
 ## Cookie와 Session의 필요성
 - HTTP는 connectionless,stateless 의 특성으로 **모든 요청 간 의존관계가 없습니다.**
