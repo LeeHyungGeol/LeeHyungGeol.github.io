@@ -177,7 +177,7 @@ EX) `Host: www.google.com`
 
 **status-line**
 1. HTTP-version
-2. **status-code(중요!!💡)** ([status-code](/_posts/2021-12-20-[Network]HTTP%20method%20&%20status%20code.md)) : 요청 성공, 실패를 나타냄
+2. **status-code(중요!!💡)** ([status-code](/_posts/2021-12-23-[Network]HTTP%20method%20&%20status%20code.md)) : 요청 성공, 실패를 나타냄
 3. reason-pharse(이유 문구) : 사람이 이해할 수 있는 짧은 상태 코드 설명 글 
 
 EX) `HTTP/1.1 200 OK`
