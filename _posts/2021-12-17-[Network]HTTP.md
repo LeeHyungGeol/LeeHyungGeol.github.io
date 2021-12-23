@@ -141,7 +141,7 @@ EX) `GET /search?q=world HTTP/1.1`
 - 요청 대상(/search?q=world)
 - HTTP 버젼(HTTP/1.1)
 
-**HTTP 메서드(중요!!💡)** ([HTTP 메서드](/_posts/2021-12-20-[Network]HTTP%20method%20&%20status%20code.md))
+**HTTP 메서드(중요!!💡)** ([HTTP 메서드](/_posts/2021-12-23-[Network]HTTP%20method%20&%20status%20code.md))
 - 종류 : GET, POST, PUT, PATCH, DELETE...
 - 서버가 수행해야 할 동작 지정
 
@@ -156,7 +156,7 @@ EX) `GET /search?q=world HTTP/1.1`
 
 **HTTP 전송에 필요한 모든 부가정보**
 - EX) message-body의 내용, message-body의 크기, 압축, 인증, request client(browser) 정보, server application 정보, 캐시 관리 정보...
-- 표준 헤더가 너무 많음 ([HTTP Header](/_posts/2021-12-20-[Network]HTTP%20Header.md))
+- 표준 헤더가 너무 많음 ([HTTP Header](/_posts/2021-12-24-[Network]HTTP%20Header.md))
 - 필요시 임의의 헤더 추가 가능
   - EX) `testHeader: test`
 - field-name은 대소문자 구문 없음
@@ -191,7 +191,7 @@ EX) `HTTP/1.1 200 OK`
 
 **HTTP 전송에 필요한 모든 부가정보**
 - EX) message-body의 내용, message-body의 크기, 압축, 인증, request client(browser) 정보, server application 정보, 캐시 관리 정보...
-- 표준 헤더가 너무 많음 ([HTTP Header](/_posts/2021-12-20-[Network]HTTP%20Header.md))
+- 표준 헤더가 너무 많음 ([HTTP Header](/_posts/2021-12-24-[Network]HTTP%20Header.md))
 - 필요시 임의의 헤더 추가 가능
   - EX) `testHeader: test`
 - field-name은 대소문자 구문 없음
