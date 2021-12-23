@@ -394,6 +394,225 @@ Location: /members/100
   - EX) `POST /orders/{id}/edit`
   - EX) HTML form 뿐만이 아닌 HTTP API에서도 많이 사용한다. -> 회원의 주문 상태를 변경하라 -> `orders/{id}/delivery`
 
+# HTTP 상태 코드(Status Code)
+
+> **HTTP 상태 코드(Status Code) : Client가 보낸 요청의 처리 상태를 응답에서 알려주는 기능**
+
+```
+1xx(Informational) - 요청이 수신되어 처리중
+2xx(Successful) - 요청 정상 처리
+3xx(Redirection) - 요청을 완료하려면 추가 행동이 필요
+4xx(Client Error) - 클라이언트 오류
+5xx(Server Error) - 서버 오류
+```
+
+## 만약 모르는 상태 코드가 나타나면?
+
+Client가 인식할 수 없는 상태 코드를 서버가 반환하면? -> **Client는 상위 상태코드로 해석해서 처리한다.**
+- 미래에 새로운 상태 코드가 추가되어도 Client를 변경하지 않아도 된다.
+- EX)
+- 299 ??? -> 2xx(Successul)
+- 467 ??? -> 4xx(Client Error)
+
+## 1xx(Informational)
+
+> **1xx(Informational) : 요청이 수신되어 처리중**
+- 거의 사용하지 않으므로 생략
+
+## 2xx(Successful) 
+
+> **2xx(Successful) : 성공, Client의 요청을 성공적으로 처리**
+
+- `200 OK` : **요청 성공**
+  - GET resource 조회 -> 200 OK + resource 전달
+- `201 Created` : **요청 성공해서 새로운 resource가 생성됨**
+  - `POST` 신규 resource 등록 요청 -> COLLECTION : Server에서 URI 생성, **생성된 resource는 Response의 Location Header 필드로 식별**
+```
+HTTP/1.1 201 Created
+Content-Type: application/json
+Location: /members/100
+{
+  "username": "young",
+  "age": 20
+}
+```
+- `202 Accepted` : **요청이 접수되었으나 처리가 완료되지 않았음**
+  - Batch 처리 같은 곳
+  - EX) 요청 접수 후 1시간 뒤에 Batch Process가 요청을 처리함
+  - 사실 잘 사용하지는 않는다.
+- `204 No Content` : **Sercer가 요청을 성공적으로 수행했지만, 응답 payload 본문에 보낼 데이터가 없음**
+  - EX) 웹 문서 작성 페이지의 save 버튼
+  - save 버튼의 결과로 아무 내용이 없어도 된다.
+  - save 버튼을 눌러도 같은 화면을 유지해야 한다.
+  - 결과 내용이 없어도 204 메시지(2xx)만으로 성공을 인식할 수 있다.
+
+### 200, 201, 202, 204 상태 코드 모두 사용하는 것이 바람직할까?
+
+모두 사용하는 것이 꼭 바람직하지는 않다. 
+- 성공은 200 코드 하나만 사용할 수도 있고,
+- 200, 201 2개만 사용할 수도 있다.
+- 개발할 때, 각 팀들이 내부적으로 어떤 것들을 사용할지 미리 범위를 정하고 개발하는 것이 좋다. 상태 코드는 너무 많은데 그것을 다 관리하기가 쉽지도 않고, 효율적이지도 않다.
+
+## 3xx - Redirection
+
+> **3xx(Redirection) : 요청을 완로하기 위해 User Agent(Client Program : Web Browser)의 추가 조치 필요**
+
+```
+300 Multiple Choices
+301 Moved Permanently
+302 Found
+303 See Other
+304 Not Modified
+307 Temporary Rerirect
+308 Parmanent Rerirect
+```
+
+### Redirection 이해
+
+- Web Browser는 3xx 응답의 결과에 Location 헤더가 있으면, Location 위치로 자동 이동합니다.(Redirect)
+
+**종류**
+
+**영구 리다이렉션 : 특정 리소스의 URI가 영구적으로 이동**
+- EX) `/members` -> `/users`
+- EX) `/event` -> `/new-event`
+
+**일시 리다이렉션 : 일시적인 변경**
+- 주문 완료 후 주문 내역 화면으로 이동 등
+- **`PRG: Post/Redirect/Get`** (패턴이다)
+
+**특수 리다이렉션 : 결과 대신 캐시를 사용**
+- EX) Client에 cache가 있고 cache기간이 만료된 것 같을 때, cache기간이 만료된 것이 맞는지 cache와 관련된 정보를 Server한테 넘겨준다.
+- cache 만료기간이 지나지 않았다면, **Server는 Client에게 cache를 그대로 사용하라고 한다.**
+
+### 영구 Redirection(301, 308)
+
+> **영구 Redirection(301, 308) : resource의 URI가 영구적으로 이동**
+
+- 원래의 URL을 사용X, 검색 엔진 등에서도 변경 인지
+- `301 Moved Permanently`
+  - **리다이렉트시 요청 메소드가 GET으로 변경되고, 본문이 제거될 수 있음(MAY)**
+    - 처음에 보낼 때 POST 로 보내면서 리소스를 함께 보냈다면, 리다이렉트 할 때는 리소스가 날아갈 수 있어요.
+- `308 Permanent Redirect`
+  - 301과 기능이 같다!
+  - 리다이렉트시 요청 메소드와 본문 유지 (처음 POST를 보내면 리다이렉트도 POST 유지)
+    - 처음에 입력한 그대로 리다이렉션 되서 넘어갑니다.
+
+사실상 실무에서는 `/event` -> `/new-event` 로 URI가 바뀌면, **내부적으로 전송해야할 data들이 다 바뀐다.** 
+- 웬만하면 `301 Moved Permanently` 을 사용하여, `POST` 로 요청이 와도, 다시 `GET` 으로 변경시킨다.
+- `301, 308`은 사실 실무에서 많이 쓰이지 않는다.
+
+### 일시적 Redirection(302, 303, 307)
+
+> **일시적 Redirection(302, 303, 307) : resource의 URI가 일시적으로 변경**
+> 따라서, 검색 엔진 등에서 URL을 변경하면 안됨
+
+- `302 Found`
+  - **리다이렉트 요청시 메소드가 GET으로 변경되고, 본문이 제거될 수 있음(MAY)**
+  - 대부분 GET으로 변경한다. 명확하지는 않다.
+- `303 See Other`
+  - 302 와 기능 같음
+  - **리다이렉트시 요청 메소드가 GET으로 변경(MUST)**
+- `307 Temporary Rerirect`
+  - 302 와 기능 같음
+  - **리다이렉트시 요청 메소드와 본문 유지(요청 메서드를 변경하면 안된다. MUST NOT)**
+
+**일시적인 Redirection 예시**
+- **`PRG: Post/Redirect/Get`**
+- **PRG 사용전**
+- POST로 주문 후에 Web Browser를 새로고침할 경우, 새로고침은 기존의 주문 요청을 다시 수행한다. -> 중복 주문이 된다.
+- 사실 이런 오류는 Server에서 미리 잘 막아야 한다. orderId를 미리 만들어 놓고, 중복 주문이 오면, 이미 사용된 주문번호 등을 이용하여 Server에서 미리 막아야 한다.
+- 그래도 Client에서도 미리 이러한 요청을 막아줄 필요가 있다.
+  - **해결법**
+  - **PRG 사용**
+  - **Post로 주문 후에 주문 결과 화면을 GET으로 Redirect**
+    - 새로고침 해도 결과화면을 GET 으로 받아서 resource를 조회한다. 그래서 중복 주문이 들어가지 않는다.
+
+### 특수 Redirection(300, 304)
+
+> **300 Multiple Choices : 안쓴다.**
+> **304 Not Modified : cache, 조건부 요청에 사용한다.**
+
+`304 Not Modified`
+- **캐시를 목적으로 사용**
+- **조건부 GET, HEAD 요청시 사용**
+- Client에서 resource(cache가 만료되지 않았다.)가 수정되지 않았음을 알려준다. 
+- 따라서 Client는 Local PC에 저장된 cache를 재사용한다.(cache로 Redirect한다.) 
+- `304 응답`은 응답에 message-body를 포함하면 안된다.(Local cache를 사용해야 하므로)
+
+### 302,303,307 중에 뭘 써야 하는가?
+
+역사
+- 처음 302 스펙의 의도는 HTTP method를 유지하는 것
+- 그런데 Web Browser들이 대부분 GET으로 바꾸어 버린다.(물론, 일부는 다르게 동작하는 것도 있다.)
+- 그래서 모호한 302 대신해서 명확한 303, 307 이 등장했다.(301을 대신해서 308도 등장했다.)
+
+현실
+- 희망하기는 보통 명확한 `303, 307`을 희망한다.
+- 하지만, 실무에서는 여전히 302도 사용된다. 자동 Redirection에서 GET으로 변경되어도 상관없는 경우에는 302를 사용하기도 한다.
+
+## 4xx - Client Error
+
+> **4xx (Client Error) : Client의 요청에 Server가 요청을 수행할 수 없음**
+> **오류의 원인이 Client에 있다!!**
+> 중요💡) Client가 이미 잘못된 요청, data를 보내고 있기 때문에, 똑같은 재시도가 실패한다.
+> 4xx오류는 Client 자체에 문제가 있기 때문에, 그대로 보내면 똑같이 오류가 발생한다. 요청을 무조건 수정해서 보내야 한다.
+
+### 400 Bad Request
+
+**Client가 잘못된 요청을 해서 Server가 요청을 처리할 수 없음**
+- Client는 요청 내용을 다시 검토하고, 보내야 한다.
+- EX) request paramter가 잘못됨, API 스펙이 맞지 않을 때(문자를 보내야 하는데, 숫자를 보낼 때)
+
+### 401 Unauthorized
+
+**Client가 해당 resource에 대한 인증이 필요함(Login 자체가 안되었다.)**
+- **인증(Authentication)되지 않음**
+- 401 오류 발생시 : 응답에 `WWW-Authenticate Header`와 함꼐 인증 방법을 설명
+  - 참고
+  - 인증(Authentication): 본인이 누구인지 확인(Login이 되어야 한다. Login이 안되면 인증이 안된다.)
+    - **Login을 할 수 있다, 없다를 확인**
+  - 인가(Authorization): 권한 부여(ADMIN 권한처럼 특정 resource에 접근할 수 있는 권한, 인증이 있어야 인가가 있다)
+    - **특정 resource에 대해 접근할 수 있는지, 없는지에 대한 등급**
+  - 오류 메시지가 Unauthorized 이지만 **인증에 대한 오류**임
+
+### 403 Forbidden
+
+**Server가 요청을 이해했지만 승인을 거부함**
+- 주로 인증 자격 증명은 있지만(Login은 되었지만, Authentication은 되었지만), 접근 권한이 불충분한 경우(Authorization이 안된 경우)
+- EX) ADMIN 등급이 아닌 사용자가 Login은 했지만, ADMIN 등급의 resource에 접근한 경우
+
+### 404 Not Found
+
+**요청 resource를 찾을 수 없음**
+- 요청 resource가 Server에 없음
+- 또는 Client가 권한이 부족한 resouce에 접근할 때 해당 resource를 숨기고 싶을 때
+
+## 5xx - Server Error
+
+> **5xx (Server Error) : Server 내부 문제로 오류 발생**
+> - Server에 문제가 있기 때문에 재시도 하면 성공할 수도 있음(복구가 되거나 등등)
+
+### 500 Internal Server Error
+
+**Server 문제로 오류 발생, 애매하면 500 error**
+- 애매하면 500 error
+
+### 503 Service Unavailable
+
+**서비스 이용 불가**
+- 서비스가 일시적인 과부하 또는 예정된 작업으로 잠시 요청을 처리할 수 없음
+- `Retry-After Header 필드`로 얼마 뒤에 복구되는지 보낼 수도 있음
+
+### 진짜 Server의 오류일 때 5xx 오류를 사용해야 한다!!
+
+비즈니스 로직상에 잘못된 요청(고객의 잔고 부족, 고객의 심사(20살 이상만 주문 가능할 때, 20살이 아닌 사람이 주문할 때))
+- **5xx Error를 내면 안된다!!**
+- 진짜 Server에 문제가 있을 때 내야 한다.
+- Monitoring tool도 5xx Error이 발생하면, Server에 심각한 오류가 있다고 판단
+- 비즈니스 로직 상의 문제는 예외 케이스인거지 -> 4xx오류로 해결
+- query 오류, NullPointerException, DB 다운이 되었을 때가 진짜 5xx Error
+
 ### 참고 문헌 및 사이트
 
 - https://ko.wikipedia.org/wiki/HTTP
